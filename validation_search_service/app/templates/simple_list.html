@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Validation tests</h1>
+
+<p>Filters:
+    <a href=".">None</a>&nbsp;
+    <a href="?species=mouse">Mouse</a>
+    <a href="?species=rat">Rat</a>
+    <a href="?brain_region=cerebellum">Cerebellum</a>
+    <a href="?brain_region=hippocampus">Hippocampus</a>
+    <a href="?brain_region=basal">Basal ganglia</a>
+    <a href="?brain_region=cortex">Cortex</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Species</th>
+        <th>Age</th>
+        <th>Brain region</th>
+        <th>Cell type</th>
+        <th>Data location</th>
+        <th>Data type</th>
+        <th>Data modality</th>
+        <th>Test type</th>
+        <th>Code location</th>
+        <th>Author</th>
+        <th>Publication</th>
+    </tr>
+    </thead>
+    <tbody>
+{% for test in object_list %}
+    <tr>
+        <td><a href="{{test.id}}">{{ test.name }}</a></td>
+        <td>{{ test.species }}</td>
+        <td>{{ test.age }}</td>
+        <td>{{ test.brain_region }}</td>
+        <td>{{ test.cell_type }}</td>
+        <td>{{ test.data_location|urlizetrunc:20 }}</td>
+        <td>{{ test.data_type }}</td>
+        <td>{{ test.get_data_modality_display }}</td>
+        <td>{{ test.get_test_type_display }}</td>
+        <td>{{ test.code_location|urlizetrunc:20 }}</td>
+        <td>{{ test.author }}</td>
+        <td>{{ test.publication }}</td>
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

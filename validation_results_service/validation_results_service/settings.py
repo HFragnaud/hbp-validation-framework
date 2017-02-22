@@ -1,16 +1,20 @@
 """
-Django settings for Validation Search Service.
+Django settings for Validation Results Service.
 
 """
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import sys
 import json
-#import hbp_app_python_auth.settings as auth_settings
 
 ENV = os.environ.get('VALIDATION_SERVICE_ENV', 'production')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'none')
@@ -31,12 +35,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'validation_search_api',
+    'validation_results_api',
     'social_django',
 ]
 if ENV == "dev":
     INSTALLED_APPS.append('sslserver')
     sys.path.append("..")
+
+APPEND_SLASH = False
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,7 +59,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-ROOT_URLCONF = 'validation_search_service.urls'
+ROOT_URLCONF = 'validation_results_service.urls'
 
 TEMPLATES = [
     {
@@ -71,11 +77,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'validation_search_service.wsgi.application'
+WSGI_APPLICATION = 'validation_results_service.wsgi.application'
 
-APPEND_SLASH = False
 
 # Database
+# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 if ENV == "dev" and LOCAL_DB:
     DATABASES = {
@@ -165,3 +171,4 @@ if os.path.exists(os.path.join(BASE_DIR, "build_info.json")):
         BUILD_INFO = json.load(fp)
 else:
     BUILD_INFO = None
+

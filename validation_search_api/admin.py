@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ValidationTestDefinition
+from .models import ValidationTestDefinition, ValidationTestCode
 
 
 @admin.register(ValidationTestDefinition)
@@ -9,3 +9,8 @@ class ValidationTestDefinitionAdmin(admin.ModelAdmin):
                     'publication', 'author')
     list_filter = ('brain_region', 'cell_type', 'test_type')
     search_fields = ('name', 'protocol')
+
+
+@admin.register(ValidationTestCode)
+class ValidationTestCodeAdmin(admin.ModelAdmin):
+   pass

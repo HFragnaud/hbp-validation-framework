@@ -1,0 +1,8 @@
+image: cnrsunic/hbp_validation_query_service
+ports:
+  80: 80
+env: [DEBUG,
+      VALIDATION_SERVICE_HOST,
+      VALIDATION_SERVICE_PORT]
+volumes: ["/etc/letsencrypt"]
+

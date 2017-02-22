@@ -21,7 +21,7 @@ from django.conf import settings
 import requests
 #from hbp_app_python_auth.auth import get_auth_header
 
-from .models import ValidationTestDefinition
+from .models import ValidationTestDefinition, ValidationTestCode
 from .forms import ValidationTestDefinitionForm
 
 CROSSREF_URL = "http://api.crossref.org/works/"
@@ -109,25 +109,46 @@ def get_user(request):
 class ValidationTestDefinitionSerializer(object):
 
     @staticmethod
-    def _to_dict(test):
+    def _to_dict(test, version=None):
+        resource_uri = "/tests/{}".format(test.pk)
+        if version is None:
+            try:
+                code_obj = ValidationTestCode.objects.filter(test_definition=test).latest()
+            except ValidationTestCode.DoesNotExist:
+                code_obj = None
+        else:
+            code_obj = ValidationTestCode.objects.get(pk=version, test_definition=test)
+            resource_uri += "?version=" + version
+        if code_obj:
+            code = {
+                "repository": code_obj.repository,
+                "version": code_obj.version,  # note that this is the Git version, not the object version
+                "path": code_obj.path
+            }
+        else:
+            code = None
         data = {
+            "name": test.name,
+            "species": test.species,
             "brain_region": test.brain_region,
             "cell_type": test.cell_type,
+            "age": test.age,
             "data_location": test.data_location,
             "data_type": test.data_type,
             "data_modality": test.data_modality,
             "test_type": test.test_type,
             "protocol": test.protocol,
-            "code_location": test.code_location,
+            "code": code,
             "author": test.author,
-            "resource_uri": "/validation-tests/{}".format(test.pk)
+            "publication": test.publication,
+            "resource_uri": resource_uri
         }
         return data
 
     @classmethod
-    def serialize(cls, tests):
+    def serialize(cls, tests, version=None):
         if isinstance(tests, ValidationTestDefinition):
-            data = cls._to_dict(tests)
+            data = cls._to_dict(tests, version=version)
         else:
             data = [cls._to_dict(test) for test in tests]
         encoder = DjangoJSONEncoder(ensure_ascii=False, indent=4)
@@ -149,13 +170,15 @@ class ValidationTestDefinitionResource(View):
         test = self._get_test(kwargs["test_id"])
         if test is None:
             return HttpResponseNotFound("No such test")
-        content = self.serializer.serialize(test)
+        code_version = request.GET.get("version", None)
+        content = self.serializer.serialize(test, code_version)
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
 class ValidationTestDefinitionListResource(View):
     serializer = ValidationTestDefinitionSerializer
 
+    # NEEDS UPDATING NOW CODE IS A SEPARATE OBJECT
     def post(self, request, *args, **kwargs):
          """Add a test"""
          # if not is_admin(request):
@@ -220,7 +243,11 @@ class SimpleDetailView(DetailView):
 
     def _get_crossref_metadata(self, publication_field):
         prefix, doi = publication_field.split(":")
-        response = requests.get(CROSSREF_URL + doi)
+        try:
+            response = requests.get(CROSSREF_URL + doi)
+        except requests.ConnectionError:
+            logger.warning("Unable to retrieve metadata for DOI {}".format(doi))
+            return {}
         if response.ok:
             return response.json()['message']
         else:

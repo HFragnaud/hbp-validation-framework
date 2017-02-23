@@ -9,10 +9,8 @@ documentation/letsencrypt
 db.sqlite3
 
 # javascript files managed by Bower
-validation_search_service/lib
-validation_search_service/static
-validation_results_service/lib
-validation_results_service/static
+validation_service/lib
+validation_service/static
 
 # ensure these are not tracked by git
 *secrets.yml

@@ -217,9 +217,9 @@ class ValidationTestDefinitionSearchResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class SimpleListView(ListView):
+class SimpleTestListView(ListView):
     model = ValidationTestDefinition
-    template_name = "simple_list.html"
+    template_name = "simple_test_list.html"
 
     def get_queryset(self):
         filters = {}
@@ -229,13 +229,19 @@ class SimpleListView(ListView):
                 filters[key + "__icontains"] = value
         return ValidationTestDefinition.objects.filter(**filters)
 
+    def get_context_data(self, **kwargs):
+        context = super(SimpleTestListView, self).get_context_data(**kwargs)
+        context["section"] = "tests"
+        return context
 
-class SimpleDetailView(DetailView):
+
+class SimpleTestDetailView(DetailView):
     model = ValidationTestDefinition
-    template_name = "simple_detail.html"
+    template_name = "simple_test_detail.html"
 
     def get_context_data(self, **kwargs):
-        context = super(SimpleDetailView, self).get_context_data(**kwargs)
+        context = super(SimpleTestDetailView, self).get_context_data(**kwargs)
+        context["section"] = "tests"
         publication_field = context["object"].publication
         if publication_field.startswith("doi:"):
             crossref_metadata = self._get_crossref_metadata(publication_field)
@@ -427,10 +433,20 @@ class SimpleModelListView(ListView):
                 filters[key + "__icontains"] = value
         return ScientificModel.objects.filter(**filters)
 
+    def get_context_data(self, **kwargs):
+        context = super(SimpleModelListView, self).get_context_data(**kwargs)
+        context["section"] = "models"
+        return context
+
 
 class SimpleModelDetailView(DetailView):
     model = ScientificModel
     template_name = "simple_model_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(SimpleModelDetailView, self).get_context_data(**kwargs)
+        context["section"] = "models"
+        return context
 
 
 class SimpleResultListView(ListView):
@@ -444,7 +460,17 @@ class SimpleResultListView(ListView):
         #        filters[key + "__icontains"] = value
         return ValidationTestResult.objects.all()  #filter(**filters)
 
+    def get_context_data(self, **kwargs):
+        context = super(SimpleResultListView, self).get_context_data(**kwargs)
+        context["section"] = "results"
+        return context
+
 
 class SimpleResultDetailView(DetailView):
     model = ValidationTestResult
     template_name = "simple_result_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(SimpleResultDetailView, self).get_context_data(**kwargs)
+        context["section"] = "results"
+        return context

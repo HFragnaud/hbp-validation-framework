@@ -17,7 +17,6 @@
         <tr><td>Data type</td><td>{{ object.data_type }}</td></tr>
         <tr><td>Data modality</td><td>{{ object.get_data_modality_display }}</td></tr>
         <tr><td>Test type</td><td>{{ object.get_test_type_display }}</td></tr>
-        <tr><td>Code location</td><td>{{ object.code_location|urlize }}</td></tr>
         <tr><td>Author</td><td>{{ object.author }}</td></tr>
         <tr><td>Publication</td><td>{% if formatted_publication %}{{ formatted_publication|urlize }}{% else %}{{ object.publication }}{% endif %}</td></tr>
         <tr><td>Protocol</td><td>{{ object.protocol }}</td></tr>

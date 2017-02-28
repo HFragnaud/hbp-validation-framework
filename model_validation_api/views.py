@@ -32,6 +32,13 @@ VALID_FILTER_NAMES = ('brain_region', 'cell_type',
                       'author', 'species')
 VALID_MODEL_FILTER_NAMES = ('brain_region', 'cell_type',
                             'author', 'species')
+VALID_RESULT_FILTERS = {
+    'model': 'model_instance__model__name__icontains',
+    'validation': 'test_definition__test_definition__name__icontains',
+    'project': 'project',
+    'collab_id': 'project',
+    'brain_region': 'test_definition__test_definition__brain_region__icontains',
+}
 
 logger = logging.getLogger("model_validation_api")
 
@@ -473,14 +480,21 @@ class SimpleResultListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         filters = {}
-        #for key, value in self.request.GET.items():
-        #    if key in VALID_MODEL_FILTER_NAMES:
-        #        filters[key + "__icontains"] = value
-        return ValidationTestResult.objects.all()  #filter(**filters)
+        for key, value in self.request.GET.items():
+            if key in VALID_RESULT_FILTERS:
+                filters[VALID_RESULT_FILTERS[key]] = value
+        print(filters)
+        return ValidationTestResult.objects.all().filter(**filters).order_by('-timestamp')
 
     def get_context_data(self, **kwargs):
         context = super(SimpleResultListView, self).get_context_data(**kwargs)
         context["section"] = "results"
+
+        # create list of model and validation filters
+        context["filters"] = {
+            "models": ScientificModel.objects.values_list('name', flat=True),
+            "tests": ValidationTestDefinition.objects.values_list('name', flat=True)
+        }
         return context
 
 

@@ -5,8 +5,13 @@
 <h1>Model validation test results</h1>
 
 <p>Filters:
-    <a href=".">None</a>&nbsp;
-    TODO: add filtering by model name, validation test name
+    <a href="?brain_region=cerebellum"><span class="label label-info">Cerebellum</span></a>
+    <a href="?brain_region=hippocampus"><span class="label label-info">Hippocampus</span></a>
+    <a href="?brain_region=basal"><span class="label label-info">Basal ganglia</span></a>
+    <a href="?brain_region=cortex"><span class="label label-info">Cortex</span></a>
+    {% for model_name in filters.models %}<a href="?model={{model_name}}"><span class="label label-info">{{model_name}}</span></a> {% endfor %}
+    {% for test_name in filters.tests %}<a href="?validation={{test_name}}"><span class="label label-info">{{test_name}}</span></a> {% endfor %}
+    <a href="."><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
 </p>
 
 <table class="table table-striped">

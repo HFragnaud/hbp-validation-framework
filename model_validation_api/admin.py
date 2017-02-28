@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import (ValidationTestDefinition, ValidationTestCode, ValidationTestResult,
                      ScientificModel, ScientificModelInstance)
 
+admin.site.site_header = "HBP Validation Service administration"
 
 @admin.register(ValidationTestDefinition)
 class ValidationTestDefinitionAdmin(admin.ModelAdmin):

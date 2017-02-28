@@ -1,12 +1,17 @@
 import json
 from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from uuid import UUID
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import requests
 #from hbp_app_python_auth.auth import get_access_token, get_token_type, get_auth_header
 #from model_validation_api.views import is_admin
+
+
+@login_required(login_url='/login/hbp/')
+def home(request):
+    return render(request, 'home.html', {})
 
 
 @login_required(login_url='/login/hbp/')

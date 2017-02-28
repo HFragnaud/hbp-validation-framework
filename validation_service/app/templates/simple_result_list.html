@@ -13,12 +13,11 @@
     <thead>
     <tr>
         <th>Date/time</th>
-        <th>Model</th>
-        <th>Version</th>
-        <th>Validation test</th>
+        <th colspan="2">Model</th>
+        <th colspan="2">Validation test</th>
         <th>Result</th>
-        <th>Pass?</th>
         <th>Platform</th>
+        <th>Collab</th>
     </tr>
     </thead>
     <tbody>
@@ -26,11 +25,12 @@
     <tr>
         <td><a href="{{ result.id }}">{{ result.timestamp }}</a></td>
         <td><a href="/view/models/{{ result.model_instance.model.id }}">{{ result.model_instance.model.name }}</a></td>
-        <td>{{ result.model_instance.version }}</td>
-        <td>{{ result.test_definition|urlize }}</td>
+        <td>{{ result.model_instance.version|truncatechars:9 }}</td>
+        <td><a href="/view/tests/{{ result.test_definition.test_definition.id }}">{{ result.test_definition.test_definition.name }}</a></td>
+        <td>{{ result.test_definition.version|truncatechars:9 }}</td>
         <td>{{ result.result }}</td>
-        <td>{{ result.passed }}</td>
         <td>{{ result.get_platform_as_dict.network_name }}</td>
+        <td>{{ result.project }}</td>
     </tr>
 {% endfor %}
     </tbody>

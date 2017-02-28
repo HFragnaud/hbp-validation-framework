@@ -8,14 +8,15 @@
 
 <table class="table table-striped">
     <tbody>
-        <tr><td>Date/time</td><td>{{ object.timestamp }}</td></tr>
-        <tr><td>Model</td><td><a href="/view/models/{{ object.model_instance.model.id }}">{{ object.model_instance.model.name }}</a></td></tr>
-        <tr><td>Version</td><td>{{ object.model_instance.version }}</td></tr>
-        <tr><td>Parameters</td><td><pre>{{ object.model_instance.parameters }}</pre></td></tr>
-        <tr><td>Validation test</td><td>{{ object.test_definition|urlize }}</td></tr>
-        <tr><td>Result</td><td>{{ object.result }}</td></tr>
-        <tr><td>Pass?</td><td>{{ object.passed }}</td></tr>
-        <tr><td>Collab</td><td>{{ object.project }}</td></tr>
+        <tr><td colspan="2">Date/time</td><td>{{ object.timestamp }}</td></tr>
+        <tr><td>Model</td><td>Name</td><td><a href="/view/models/{{ object.model_instance.model.id }}">{{ object.model_instance.model.name }}</a></td></tr>
+        <tr><td></td><td>Version</td><td>{{ object.model_instance.version }}</td></tr>
+        <tr><td></td><td>Parameters</td><td><pre>{{ object.model_instance.parameters }}</pre></td></tr>
+        <tr><td>Validation test</td><td>Name</td><td><a href="/view/tests/{{ object.test_definition.test_definition.id }}">{{ object.test_definition.test_definition.name }}</a></td></tr>
+        <tr><td></td><td>Version</td><td>{{ object.test_definition.version }}</td></tr>
+        <tr><td colspan="2">Result</td><td>{{ object.result }}</td></tr>
+        <tr><td colspan="2">Pass?</td><td>{{ object.passed }}</td></tr>
+        <tr><td colspan="2">Collab</td><td>{{ object.project }}</td></tr>
     </tbody>
 </table>
 

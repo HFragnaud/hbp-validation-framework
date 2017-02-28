@@ -116,7 +116,7 @@ class ScientificModelInstance(models.Model):
 class ValidationTestResult(models.Model):
 
     model_instance = models.ForeignKey(ScientificModelInstance)
-    test_definition = models.URLField(help_text="URI of the validation test definition")
+    test_definition = models.ForeignKey(ValidationTestCode)
     results_storage = models.TextField(help_text="Location of data files produced by the test run")  # or store locations of individual files?
     result = models.FloatField(help_text="A numerical measure of the difference between model and experiment")  # name this 'score'? like sciunit
     # should result be a Quantity?
@@ -126,6 +126,9 @@ class ValidationTestResult(models.Model):
     project = models.CharField(help_text="Project with which this test run is associated(optional)",
                                max_length=200,
                                blank=True)  # project==collab_id for HBP
+
+    class Meta:
+        get_latest_by = "timestamp"
 
     def get_platform_as_dict(self):
         return json.loads(self.platform)

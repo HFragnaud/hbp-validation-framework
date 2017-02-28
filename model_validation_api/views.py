@@ -289,9 +289,12 @@ class ValidationTestResultSerializer(object):
             "model_instance": {
                 "model_id": result.model_instance.model.pk,
                 "version": result.model_instance.version,
-                "parameters": result.model_instance.parameters
+                "parameters": result.model_instance.parameters,
+                "resource_uri": "/models/{}?instance={}".format(result.model_instance.model.pk,
+                                                                result.model_instance.pk)
             },
-            "test_definition": result.test_definition,
+            "test_definition": "/tests/{}?version={}".format(result.test_definition.test_definition.pk,
+                                                             result.test_definition.pk),
             "results_storage": result.results_storage,
             "result": result.result,
             "passed": result.passed,

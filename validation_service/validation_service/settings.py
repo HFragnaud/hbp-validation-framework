@@ -6,7 +6,7 @@ Django settings for Validation Search Service.
 import os
 import sys
 import json
-#import hbp_app_python_auth.settings as auth_settings
+import hbp_app_python_auth.settings as auth_settings
 
 ENV = os.environ.get('VALIDATION_SERVICE_ENV', 'production')
 
@@ -32,7 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'model_validation_api',
-    'social_django',
+    #'social_django',
+    'social.apps.django_app.default',
+    'hbp_app_python_auth'
 ]
 if ENV == "dev":
     INSTALLED_APPS.append('sslserver')
@@ -45,11 +47,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    #'social_django.middleware.SocialAuthExceptionMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware'
 )
 
 AUTHENTICATION_BACKENDS = (
-    #'hbp_app_python_auth.auth.HbpAuth',
+    'hbp_app_python_auth.auth.HbpAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -127,8 +130,9 @@ HBP_COLLAB_SERVICE_URL = 'https://services.humanbrainproject.eu/collab/v0/'
 HBP_ENV_URL = 'https://collab.humanbrainproject.eu/config.json'
 HBP_IDENTITY_SERVICE_URL = 'https://services.humanbrainproject.eu/idm/v1/api'
 
-#SOCIAL_AUTH_HBP_KEY = auth_settings.SOCIAL_AUTH_HBP_KEY = os.environ.get('HBP_OIDC_CLIENT_ID')
-#SOCIAL_AUTH_HBP_SECRET = auth_settings.SOCIAL_AUTH_HBP_SECRET = os.environ.get('HBP_OIDC_CLIENT_SECRET')
+SOCIAL_AUTH_HBP_KEY = auth_settings.SOCIAL_AUTH_HBP_KEY = os.environ.get('HBP_OIDC_CLIENT_ID')
+SOCIAL_AUTH_HBP_SECRET = auth_settings.SOCIAL_AUTH_HBP_SECRET = os.environ.get('HBP_OIDC_CLIENT_SECRET')
+
 
 LOGGING = {
     'version': 1,

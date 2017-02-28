@@ -9,6 +9,7 @@ from datetime import date
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.views.generic import View, ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import (HttpResponse, JsonResponse,
                          HttpResponseBadRequest,     # 400
                          HttpResponseForbidden,      # 403
@@ -158,8 +159,9 @@ class ValidationTestDefinitionSerializer(object):
         return encoder.encode(data)
 
 
-class ValidationTestDefinitionResource(View):
+class ValidationTestDefinitionResource(LoginRequiredMixin, View):
     serializer = ValidationTestDefinitionSerializer
+    login_url='/login/hbp/'
 
     def _get_test(self, test_id):
         try:
@@ -178,8 +180,9 @@ class ValidationTestDefinitionResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ValidationTestDefinitionListResource(View):
+class ValidationTestDefinitionListResource(LoginRequiredMixin, View):
     serializer = ValidationTestDefinitionSerializer
+    login_url='/login/hbp/'
 
     # NEEDS UPDATING NOW CODE IS A SEPARATE OBJECT
     def post(self, request, *args, **kwargs):
@@ -201,8 +204,9 @@ class ValidationTestDefinitionListResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ValidationTestDefinitionSearchResource(View):
+class ValidationTestDefinitionSearchResource(LoginRequiredMixin, View):
     serializer = ValidationTestDefinitionSerializer
+    login_url='/login/hbp/'
 
     def get(self, request, *args, **kwargs):
         filters = {}
@@ -217,9 +221,11 @@ class ValidationTestDefinitionSearchResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class SimpleTestListView(ListView):
+
+class SimpleTestListView(LoginRequiredMixin, ListView):
     model = ValidationTestDefinition
     template_name = "simple_test_list.html"
+    login_url='/login/hbp/'
 
     def get_queryset(self):
         filters = {}
@@ -235,9 +241,10 @@ class SimpleTestListView(ListView):
         return context
 
 
-class SimpleTestDetailView(DetailView):
+class SimpleTestDetailView(LoginRequiredMixin, DetailView):
     model = ValidationTestDefinition
     template_name = "simple_test_detail.html"
+    login_url='/login/hbp/'
 
     def get_context_data(self, **kwargs):
         context = super(SimpleTestDetailView, self).get_context_data(**kwargs)
@@ -331,8 +338,9 @@ class ScientificModelSerializer(object):
 
 
 
-class ValidationTestResultResource(View):
+class ValidationTestResultResource(LoginRequiredMixin, View):
     serializer = ValidationTestResultSerializer
+    login_url='/login/hbp/'
 
     def _get_result(self, result_id):
         try:
@@ -350,8 +358,9 @@ class ValidationTestResultResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ValidationTestResultListResource(View):
+class ValidationTestResultListResource(LoginRequiredMixin, View):
     serializer = ValidationTestResultSerializer
+    login_url='/login/hbp/'
 
     def post(self, request, *args, **kwargs):
         """Add a result"""
@@ -380,8 +389,9 @@ class ValidationTestResultListResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ScientificModelResource(View):
+class ScientificModelResource(LoginRequiredMixin, View):
     serializer = ScientificModelSerializer
+    login_url='/login/hbp/'
 
     def _get_model(self, model_id):
         try:
@@ -399,8 +409,9 @@ class ScientificModelResource(View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ScientificModelListResource(View):
+class ScientificModelListResource(LoginRequiredMixin, View):
     serializer = ScientificModelSerializer
+    login_url='/login/hbp/'
 
     def post(self, request, *args, **kwargs):
          """Add a model"""
@@ -422,9 +433,10 @@ class ScientificModelListResource(View):
 
 
 
-class SimpleModelListView(ListView):
+class SimpleModelListView(LoginRequiredMixin, ListView):
     model = ScientificModel
     template_name = "simple_model_list.html"
+    login_url='/login/hbp/'
 
     def get_queryset(self):
         filters = {}
@@ -439,9 +451,10 @@ class SimpleModelListView(ListView):
         return context
 
 
-class SimpleModelDetailView(DetailView):
+class SimpleModelDetailView(LoginRequiredMixin, DetailView):
     model = ScientificModel
     template_name = "simple_model_detail.html"
+    login_url='/login/hbp/'
 
     def get_context_data(self, **kwargs):
         context = super(SimpleModelDetailView, self).get_context_data(**kwargs)
@@ -449,9 +462,10 @@ class SimpleModelDetailView(DetailView):
         return context
 
 
-class SimpleResultListView(ListView):
+class SimpleResultListView(LoginRequiredMixin, ListView):
     model = ValidationTestResult
     template_name = "simple_result_list.html"
+    login_url='/login/hbp/'
 
     def get_queryset(self):
         filters = {}
@@ -466,7 +480,7 @@ class SimpleResultListView(ListView):
         return context
 
 
-class SimpleResultDetailView(DetailView):
+class SimpleResultDetailView(LoginRequiredMixin, DetailView):
     model = ValidationTestResult
     template_name = "simple_result_detail.html"
 

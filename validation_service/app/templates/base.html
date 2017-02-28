@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load oidc_session %}
 
 <!DOCTYPE html>
 <html>
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'app.css' %}">
   </head>
   <body>
+    {% hbp_oidc_session_handler request.user %}
 
     <nav class="navbar navbar-default navbar-static-top">
     <div class="container-fluid">

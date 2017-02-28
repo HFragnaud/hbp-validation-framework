@@ -297,6 +297,7 @@ class ValidationTestResultSerializer(object):
             "passed": result.passed,
             "platform": result.get_platform_as_dict(),
             "timestamp": result.timestamp,
+            "project": result.project,
             "resource_uri": "/results/{}".format(result.pk)
         }
         return data

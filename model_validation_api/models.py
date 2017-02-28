@@ -89,7 +89,7 @@ class ScientificModel(models.Model):
     species = models.CharField(max_length=100, blank=True, help_text="species")
     brain_region = models.CharField(max_length=100, blank=True, help_text="brain region, if applicable")
     cell_type = models.CharField(max_length=100, blank=True, help_text="cell type, for single-cell models")
-    author = models.TextField(help_text="Author(s) of this model")
+    author = models.TextField(help_text="Author(s) of this model")  # do we need a separate "owner" field?
     source = models.URLField(help_text="Version control repository containing the source code of the model")
     # todo: move `source` field into ModelInstance
     # model_type? (network, single neuron, etc.)?
@@ -123,6 +123,9 @@ class ValidationTestResult(models.Model):
     passed = models.NullBooleanField(help_text="Whether the test passed or failed")
     timestamp = models.DateTimeField(auto_now_add=True, help_text="Timestamp of when the simulation was run")
     platform = models.TextField(help_text="Computer system on which the simulation was run")
+    project = models.CharField(help_text="Project with which this test run is associated(optional)",
+                               max_length=200,
+                               blank=True)  # project==collab_id for HBP
 
     def get_platform_as_dict(self):
         return json.loads(self.platform)

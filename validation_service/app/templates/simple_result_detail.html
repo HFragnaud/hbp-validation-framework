@@ -16,13 +16,13 @@
         <tr><td></td><td>Version</td><td>{{ object.test_definition.version }}</td></tr>
         <tr><td colspan="2">Result</td><td>{{ object.result }}</td></tr>
         <tr><td colspan="2">Pass?</td><td>{{ object.passed }}</td></tr>
-        <tr><td colspan="2">Collab</td><td>{{ object.project }}</td></tr>
+        <tr><td colspan="2">Collab</td><td><a href="https://collab.humanbrainproject.eu/#/collab/{{ object.project }}">{{ collab_name }}</a></td></tr>
     </tbody>
 </table>
 
 <h2>Additional data</h2>
-<p>todo: list data files here</p>
-<p>{{ object.results_storage|urlize}}</p>
+<p><a href="{{related_data.folder.url}}">{{ related_data.folder.path }}</a></p>
+
 
 <h2>Platform</h2>
 <table class="table table-striped">

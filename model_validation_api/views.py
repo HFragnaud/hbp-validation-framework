@@ -5,6 +5,7 @@
 
 import json
 import logging
+from urlparse import urlparse
 from datetime import date
 from django.shortcuts import render
 from django.forms.models import model_to_dict
@@ -20,7 +21,7 @@ from django.http import (HttpResponse, JsonResponse,
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 import requests
-#from hbp_app_python_auth.auth import get_auth_header
+from hbp_app_python_auth.auth import get_access_token, get_auth_header
 
 from .models import (ValidationTestDefinition, ValidationTestCode,
                      ValidationTestResult, ScientificModelInstance, ScientificModel)
@@ -505,4 +506,58 @@ class SimpleResultDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SimpleResultDetailView, self).get_context_data(**kwargs)
         context["section"] = "results"
+        context["related_data"] = self.get_related_data(self.request.user)
+        context["collab_name"] = self.get_collab_name()
         return context
+
+    def get_collab_name(self):
+        import bbp_services.client as bsc
+        services = bsc.get_services()
+        headers = {
+            'Authorization': get_auth_header(self.request.user.social_auth.get())
+        }
+        url = services['collab_service']['prod']['url'] + "collab/{}/".format(self.object.project)
+        response = requests.get(url, headers=headers)
+        collab_name = response.json()["title"]
+        return collab_name
+
+    def get_collab_storage_url(self):
+        import bbp_services.client as bsc
+        services = bsc.get_services()
+        headers = {
+            'Authorization': get_auth_header(self.request.user.social_auth.get())
+        }
+        url = services['collab_service']['prod']['url'] + "collab/{}/nav/all/".format(self.object.project)
+        response = requests.get(url, headers=headers)
+        nav_items = response.json()
+        for item in nav_items:
+            if item["app_id"] == "31":  # Storage app
+                return "https://collab.humanbrainproject.eu/#/collab/{}/nav/{}".format(self.object.project, item["id"])
+        # todo: add ?state=uuid:<UUID of folder>
+
+    def get_related_data(self, user):
+        # assume for now that data is in collab
+        from bbp_client.oidc.client import BBPOIDCClient
+        from bbp_client.document_service.client import Client as DocClient
+        import bbp_services.client as bsc
+        services = bsc.get_services()
+
+        access_token = get_access_token(user.social_auth.get())
+        oidc_client = BBPOIDCClient.bearer_auth(services['oidc_service']['prod']['url'], access_token)
+        doc_client = DocClient(services['document_service']['prod']['url'], oidc_client)
+
+        parse_result = urlparse(self.object.results_storage)
+        if parse_result.scheme == "collab":
+            collab_folder = parse_result.path
+            #return doc_client.listdir(collab_folder)
+            folder_uuid = doc_client.get_standard_attr(collab_folder)['_uuid']
+            data = {
+                "folder": {
+                    "path": collab_folder,
+                    "url": self.get_collab_storage_url() + "?state=uuid={}".format(folder_uuid)
+                }
+            }
+            return data
+        else:
+            print("Storage not yet supported")
+            return {}

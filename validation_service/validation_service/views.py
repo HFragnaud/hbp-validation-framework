@@ -5,7 +5,7 @@ from uuid import UUID
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import requests
-#from hbp_app_python_auth.auth import get_access_token, get_token_type, get_auth_header
+from hbp_app_python_auth.auth import get_access_token, get_token_type, get_auth_header
 #from model_validation_api.views import is_admin
 
 
@@ -33,24 +33,24 @@ def test(request):
     return render_to_response('test.html', {})
 
 
-# @login_required(login_url='/login/hbp/')
+@login_required(login_url='/login/hbp/')
 def config(request):
     '''Render the config file'''
 
     res = requests.get(settings.HBP_ENV_URL)
     config = res.json()
-#
-#     # Use this app client ID
-#     config['auth']['clientId'] = settings.SOCIAL_AUTH_HBP_KEY
-#
-#     # Add user token informations
-#     request.user.social_auth.get().extra_data
-#     config['auth']['token'] = {
-#         'access_token': get_access_token(request.user.social_auth.get()),
-#         'token_type': get_token_type(request.user.social_auth.get()),
-#         'expires_in': request.session.get_expiry_age(),
-#     }
-#     config['build'] = settings.BUILD_INFO
+
+    # Use this app client ID
+    config['auth']['clientId'] = settings.SOCIAL_AUTH_HBP_KEY
+
+    # Add user token informations
+    request.user.social_auth.get().extra_data
+    config['auth']['token'] = {
+        'access_token': get_access_token(request.user.social_auth.get()),
+        'token_type': get_token_type(request.user.social_auth.get()),
+        'expires_in': request.session.get_expiry_age(),
+    }
+    config['build'] = settings.BUILD_INFO
 
     return HttpResponse(json.dumps(config), content_type='application/json')
 

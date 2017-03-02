@@ -22,9 +22,9 @@ RUN pip install uwsgi
 ENV SITEDIR /home/docker/site
 
 COPY validation_service $SITEDIR
-#COPY packages /home/docker/packages
+COPY packages /home/docker/packages
 COPY model_validation_api /home/docker/model_validation_api
-#COPY build_info.json $SITEDIR
+COPY build_info.json $SITEDIR
 
 WORKDIR /home/docker
 RUN pip install -r $SITEDIR/requirements.txt

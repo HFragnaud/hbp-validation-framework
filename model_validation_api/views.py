@@ -5,7 +5,7 @@
 
 import json
 import logging
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 from datetime import date
 from django.shortcuts import render
 from django.forms.models import model_to_dict
@@ -126,16 +126,17 @@ class ValidationTestDefinitionSerializer(object):
         if version is None:
             try:
                 code_obj = ValidationTestCode.objects.filter(test_definition=test).latest()
+                version = code_obj.pk
             except ValidationTestCode.DoesNotExist:
                 code_obj = None
         else:
             code_obj = ValidationTestCode.objects.get(pk=version, test_definition=test)
-            resource_uri += "?version=" + version
         if code_obj:
+            resource_uri += "?version={}".format(version)
             code = {
                 "repository": code_obj.repository,
                 "version": code_obj.version,  # note that this is the Git version, not the object version
-                "path": code_obj.path
+                "path": code_obj.path,
             }
         else:
             code = None
@@ -385,8 +386,15 @@ class ValidationTestResultListResource(View):
         model_instance, created = ScientificModelInstance.objects.get_or_create(model=sci_model,
                                                                             version=data["model_instance"]["version"],
                                                                             parameters=data["model_instance"]["parameters"])
+        test_uri = data["test_definition"]
+        parsed_uri = urlparse(test_uri)
+        test_id = int(parsed_uri.path.split("/")[-1])
+        test_instance_id = int(parse_qs(parsed_uri.query)['version'][0])
+        test_instance = ValidationTestCode.objects.get(pk=test_instance_id)
+        assert test_instance.test_definition.pk == test_id, "{} != {}".format(test_instance.test_definition.pk, test_id)   # sanity check
+
         new_test_result = ValidationTestResult(model_instance=model_instance,
-                                               test_definition=data["test_definition"],
+                                               test_definition=test_instance,
                                                results_storage=data["results_storage"],
                                                result=float(data["result"]),  # should be a Quantity?
                                                passed=data["passed"],
@@ -460,6 +468,7 @@ class SimpleModelListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SimpleModelListView, self).get_context_data(**kwargs)
         context["section"] = "models"
+        context["build_info"] = settings.BUILD_INFO
         return context
 
 
@@ -471,6 +480,7 @@ class SimpleModelDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SimpleModelDetailView, self).get_context_data(**kwargs)
         context["section"] = "models"
+        context["build_info"] = settings.BUILD_INFO
         return context
 
 
@@ -490,6 +500,7 @@ class SimpleResultListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SimpleResultListView, self).get_context_data(**kwargs)
         context["section"] = "results"
+        context["build_info"] = settings.BUILD_INFO
 
         # create list of model and validation filters
         context["filters"] = {
@@ -506,6 +517,7 @@ class SimpleResultDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(SimpleResultDetailView, self).get_context_data(**kwargs)
         context["section"] = "results"
+        context["build_info"] = settings.BUILD_INFO
         context["related_data"] = self.get_related_data(self.request.user)
         context["collab_name"] = self.get_collab_name()
         return context

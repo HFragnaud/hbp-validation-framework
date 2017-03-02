@@ -167,7 +167,7 @@ class ValidationTestDefinitionSerializer(object):
         return encoder.encode(data)
 
 
-class ValidationTestDefinitionResource(LoginRequiredMixin, View):
+class ValidationTestDefinitionResource(View):
     serializer = ValidationTestDefinitionSerializer
     login_url='/login/hbp/'
 
@@ -188,7 +188,7 @@ class ValidationTestDefinitionResource(LoginRequiredMixin, View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ValidationTestDefinitionListResource(LoginRequiredMixin, View):
+class ValidationTestDefinitionListResource(View):
     serializer = ValidationTestDefinitionSerializer
     login_url='/login/hbp/'
 
@@ -212,7 +212,7 @@ class ValidationTestDefinitionListResource(LoginRequiredMixin, View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ValidationTestDefinitionSearchResource(LoginRequiredMixin, View):
+class ValidationTestDefinitionSearchResource(View):
     serializer = ValidationTestDefinitionSerializer
     login_url='/login/hbp/'
 
@@ -350,7 +350,7 @@ class ScientificModelSerializer(object):
 
 
 
-class ValidationTestResultResource(LoginRequiredMixin, View):
+class ValidationTestResultResource(View):
     serializer = ValidationTestResultSerializer
     login_url='/login/hbp/'
 
@@ -370,7 +370,7 @@ class ValidationTestResultResource(LoginRequiredMixin, View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ValidationTestResultListResource(LoginRequiredMixin, View):
+class ValidationTestResultListResource(View):
     serializer = ValidationTestResultSerializer
     login_url='/login/hbp/'
 
@@ -401,7 +401,7 @@ class ValidationTestResultListResource(LoginRequiredMixin, View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ScientificModelResource(LoginRequiredMixin, View):
+class ScientificModelResource(View):
     serializer = ScientificModelSerializer
     login_url='/login/hbp/'
 
@@ -421,7 +421,7 @@ class ScientificModelResource(LoginRequiredMixin, View):
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=200)
 
 
-class ScientificModelListResource(LoginRequiredMixin, View):
+class ScientificModelListResource(View):
     serializer = ScientificModelSerializer
     login_url='/login/hbp/'
 

@@ -398,7 +398,8 @@ class ValidationTestResultListResource(View):
                                                results_storage=data["results_storage"],
                                                result=float(data["result"]),  # should be a Quantity?
                                                passed=data["passed"],
-                                               platform=json.dumps(data["platform"]))
+                                               platform=json.dumps(data["platform"]),
+                                               project=data.get("project", ""))
         new_test_result.save()
         content = self.serializer.serialize(new_test_result)
         return HttpResponse(content, content_type="application/json; charset=utf-8", status=201)

@@ -520,7 +520,8 @@ class SimpleResultDetailView(LoginRequiredMixin, DetailView):
         context["section"] = "results"
         context["build_info"] = settings.BUILD_INFO
         context["related_data"] = self.get_related_data(self.request.user)
-        context["collab_name"] = self.get_collab_name()
+        if self.object.project:
+            context["collab_name"] = self.get_collab_name()
         return context
 
     def get_collab_name(self):
@@ -542,11 +543,13 @@ class SimpleResultDetailView(LoginRequiredMixin, DetailView):
         }
         url = services['collab_service']['prod']['url'] + "collab/{}/nav/all/".format(self.object.project)
         response = requests.get(url, headers=headers)
-        nav_items = response.json()
-        for item in nav_items:
-            if item["app_id"] == "31":  # Storage app
-                return "https://collab.humanbrainproject.eu/#/collab/{}/nav/{}".format(self.object.project, item["id"])
-        # todo: add ?state=uuid:<UUID of folder>
+        if response.ok:
+            nav_items = response.json()
+            for item in nav_items:
+                if item["app_id"] == "31":  # Storage app
+                    return "https://collab.humanbrainproject.eu/#/collab/{}/nav/{}".format(self.object.project, item["id"])
+        else:
+            return ""
 
     def get_related_data(self, user):
         # assume for now that data is in collab
@@ -567,9 +570,10 @@ class SimpleResultDetailView(LoginRequiredMixin, DetailView):
             data = {
                 "folder": {
                     "path": collab_folder,
-                    "url": self.get_collab_storage_url() + "?state=uuid={}".format(folder_uuid)
                 }
             }
+            if self.object.project:
+                data["folder"]["url"] = self.get_collab_storage_url() + "?state=uuid={}".format(folder_uuid)
             return data
         else:
             print("Storage not yet supported")

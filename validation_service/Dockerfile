@@ -12,8 +12,7 @@ FROM debian:jessie-slim
 MAINTAINER Andrew Davison <andrew.davison@unic.cnrs-gif.fr>
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update --fix-missing
-RUN apt-get -y -q install python-dev python-pip sqlite3 python-psycopg2 supervisor build-essential nginx-extras python-yaml python-requests python-markdown
+RUN apt-get update --fix-missing; apt-get -y -q install python-dev python-pip sqlite3 python-psycopg2 supervisor build-essential nginx-extras python-yaml python-requests python-markdown
 RUN unset DEBIAN_FRONTEND
 
 RUN pip install --upgrade pip
